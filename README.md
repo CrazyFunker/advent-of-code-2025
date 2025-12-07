@@ -20,3 +20,27 @@ cargo run --bin day01
 ```
 
 Replace `day01` with the appropriate day you want to run (e.g., `day02`, `day03`, etc.).
+
+## How to Run All Solutions
+
+To run all available solutions in succession, you can use the `run_all.sh` script:
+
+```sh
+./run_all.sh
+```
+
+This will execute each day's binary and print the results.
+
+## How to Test Solutions
+
+You can run all tests for the entire project using:
+
+```sh
+cargo test
+```
+
+To test a specific day's solution, use the `--bin` flag. For example, to test the solution for Day 1:
+
+```sh
+cargo test --bin day01
+```
