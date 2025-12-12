@@ -22,101 +22,62 @@ fn main() {
 }
 
 fn part1(input: &str) -> usize {
-    // iterate over each line
-    let mut sum: usize = 0;
-    for line in input.lines() {
-        sum += find_largest_joltage(line);
-    }
-
-    sum
+    input.lines().map(find_largest_joltage).sum()
 }
 
 fn find_largest_joltage(line: &str) -> usize {
-    let c: Vec<u32> = line.chars()
-        .filter_map(|c| c.to_digit(10))
-        .collect();
-
-    let mut pointer_1 = 0;
-    let mut pointer_2 = 1;
-    let mut max_joltage = 0;
-
-    while pointer_1 < c.len() - 1 {
-        while pointer_2 < c.len() {
-            let joltage = c[pointer_1]*10 + c[pointer_2];
-            if joltage > max_joltage {
-                max_joltage = joltage;
-            }
-            pointer_2 += 1;
-        }
-        pointer_1 += 1;
-        pointer_2 = pointer_1 + 1;
-    }
-
-    max_joltage as usize
+    max_joltage_subsequence(line, 2) as usize
 }
 
-fn find_largest_joltage_2(line: &str, window_size: usize) -> u64 {
-    let c: Vec<u64> = line.chars()
-        .filter_map(|c| c.to_digit(10))
-        .map(|x| x as u64)
+fn find_largest_joltage_2(line: &str, digits_to_pick: usize) -> u64 {
+    max_joltage_subsequence(line, digits_to_pick)
+}
+
+fn max_joltage_subsequence(line: &str, k: usize) -> u64 {
+    // Keep prior behavior: ignore non-digits.
+    let digits: Vec<u8> = line
+        .bytes()
+        .filter(|b| b.is_ascii_digit())
+        .map(|b| b - b'0')
         .collect();
 
-    let mut pointer_vec: Vec<usize> = Vec::new();
-    for i in 0..window_size {
-        pointer_vec.push(i);
+    if k == 0 || k > digits.len() {
+        return 0;
     }
 
-    let mut max_joltage: u64 = 0;
-
-    while pointer_vec[0] < c.len() - window_size + 1 {
-        // calculate joltage
-        let mut joltage: u64 = 0;
-        
-        // itarate over pointer_vec to build the joltage number
-        for p in pointer_vec.iter().enumerate() {
-            let pointer_index = p.0;
-            let pointer_value = *p.1;
-
-            let exponent = (window_size - pointer_index - 1) as u32;
-
-            joltage = joltage + 10_u64.pow(exponent) * c[pointer_value];
-            if joltage > max_joltage {
-                max_joltage = joltage;
-            }
-        }
-
-        // set next pointer position
-        // increment the last pointer that is possible to increment and reset all the following pointers
-        let mut done = true;
-        for i in (0..window_size).rev() {
-            if pointer_vec[i] < c.len() - (window_size - i) {
-                pointer_vec[i] += 1;
-                // reset all following pointers
-                for j in i+1..window_size {
-                    pointer_vec[j] = pointer_vec[j-1] + 1;
+    // Greedy monotonic stack: remove (n-k) digits to maximize the remaining k-digit number.
+    let mut remove = digits.len() - k;
+    let mut stack: Vec<u8> = Vec::with_capacity(digits.len());
+    for d in digits {
+        while remove > 0 {
+            match stack.last() {
+                Some(&last) if last < d => {
+                    stack.pop();
+                    remove -= 1;
                 }
-                done = false;
-                break;
+                _ => break,
             }
         }
-
-        if done {
-            break;
-        }
+        stack.push(d);
     }
 
-    max_joltage
+    if remove > 0 {
+        stack.truncate(stack.len().saturating_sub(remove));
+    }
+    stack.truncate(k);
+
+    let mut value: u64 = 0;
+    for d in stack {
+        value = value
+            .checked_mul(10)
+            .and_then(|v| v.checked_add(d as u64))
+            .expect("joltage number overflowed u64");
+    }
+    value
 }
 
 fn part2(input: &str) -> u64 {
-    // iterate over each line
-    let mut sum: u64 = 0;
-    for line in input.lines() {
-        sum += find_largest_joltage_2(line, 12);
-        println!("Line processed.");
-    }
-
-    sum
+    input.lines().map(|line| find_largest_joltage_2(line, 12)).sum()
 }
 
 #[cfg(test)]
