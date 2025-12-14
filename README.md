@@ -44,3 +44,41 @@ To test a specific day's solution, use the `--bin` flag. For example, to test th
 ```sh
 cargo test --bin day01
 ```
+
+## Current results + timing results (SPOILERS!)
+
+### --- Day 1 ---
+
+Part 1: 982 (took 36.875µs)
+
+Part 2: 6106 (took 75µs)
+
+### --- Day 2 ---
+
+Part 1: 5398419778 (took 8.175833ms)
+
+Part 2: 15704845910 (took 206.530584ms)
+
+### --- Day 3 ---
+
+Part 1: 17179 (took 138.959µs)
+
+Part 2: 170025781683941 (took 127µs)
+
+### --- Day 4 ---
+
+Part 1: 1474 (took 231.875µs)
+
+Part 2: 8910 (took 3.871375ms)
+
+### --- Day 5 ---
+
+Part 1: 640 (took 74.167µs)
+
+Part 2: 365804144481581 (took 28.667µs)
+
+### --- Day 6 ---
+
+Part 1: 5552221122013 (took 257.875µs)
+
+Part 2: 11371597126232 (took 3.598417ms)
